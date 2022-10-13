@@ -23,7 +23,7 @@ contract Flashloan is FlashLoanSimpleReceiverBase {
         //WE have the borrowed funds
         //custom logic
         uint256 amountOwed = amount + premium;
-        ERC20(asset).approve(address(POOL), amountOwed);
+        IERC20(asset).approve(address(POOL), amountOwed);
 
         return true;
     }
@@ -42,7 +42,7 @@ contract Flashloan is FlashLoanSimpleReceiverBase {
         return IERC20(_tokenAddress).balanceOf(address(this));
     }
 
-    function withdraw(address _tokenAddress) external {
+    function withdraw(address _tokenAddress) external onlyOwner {
         IERC20 token = IERC20(_tokenAddress);
         token.transfer(msg.sender, token.balanceOf(address(this)));
     }
@@ -51,4 +51,6 @@ contract Flashloan is FlashLoanSimpleReceiverBase {
         require(msg.sender == owner, "Only owner of the contract can call this function");
         _;
     }
+
+    receive() external payable {}
 }
